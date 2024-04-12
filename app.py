@@ -69,27 +69,27 @@ def add_paciente(form: PacienteSchema):
         return {"message": error_msg}, 400
 
 
-# @app.get('/pacientes', tags=[paciente_tag],
-#          responses={"200": ListagemPacientesSchema, "404": ErrorSchema})
-# def get_pacientes():
-#     """Faz a busca por todos os Paciente cadastrados
+@app.get('/pacientes', tags=[paciente_tag],
+         responses={"200": ListagemPacientesSchema, "404": ErrorSchema})
+def get_pacientes():
+    """Faz a busca por todos os Paciente cadastrados
 
-#     Retorna uma representação da listagem de pacientes.
-#     """
-#     logger.debug(f"Coletando pacientes ")
-#     # criando conexão com a base
-#     session = Session()
-#     # fazendo a busca
-#     pacientes = session.query(Paciente).all()
+    Retorna uma representação da listagem de pacientes.
+    """
+    logger.debug(f"Coletando pacientes ")
+    # criando conexão com a base
+    session = Session()
+    # fazendo a busca
+    pacientes = session.query(Paciente).all()
 
-#     if not pacientes:
-#         # se não há pacientes cadastrados
-#         return {"pacientes": []}, 200
-#     else:
-#         logger.debug(f"%d rodutos econtrados" % len(pacientes))
-#         # retorna a representação de paciente
-#         print(pacientes)
-#         return apresenta_pacientes(pacientes), 200
+    if not pacientes:
+        # se não há pacientes cadastrados
+        return {"pacientes": []}, 200
+    else:
+        logger.debug(f"%d Pacientes encontrados" % len(pacientes))
+        # retorna a representação de paciente
+        print(pacientes)
+        return apresenta_pacientes(pacientes), 200
 
 
 # @app.get('/paciente', tags=[paciente_tag],

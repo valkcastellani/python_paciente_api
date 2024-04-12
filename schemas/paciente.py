@@ -40,8 +40,6 @@ def apresenta_pacientes(pacientes: List[Paciente]):
             "cpf": paciente.cpf,
             "nome": paciente.nome,
             "data_nascimento": paciente.data_nascimento,
-            "cep": paciente.cep,
-            "endereco": paciente.endereco,
             "telefone": paciente.telefone,
             "email": paciente.email,
             "data_insercao": paciente.data_insercao
