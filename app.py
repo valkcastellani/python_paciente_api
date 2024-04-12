@@ -5,167 +5,174 @@ from urllib.parse import unquote
 from sqlalchemy.exc import IntegrityError
 
 from model import Session, Paciente
-#, Comentario
 from logger import logger
 from schemas import *
 from flask_cors import CORS
 
-info = Info(title="Minha API", version="1.0.0")
+info = Info(title="Pacientes API", version="1.0.0")
 app = OpenAPI(__name__, info=info)
 CORS(app)
 
 # definindo tags
-home_tag = Tag(name="Documentação", description="Seleção de documentação: Swagger, Redoc ou RapiDoc")
-#produto_tag = Tag(name="Produto", description="Adição, visualização e remoção de produtos à base")
-#comentario_tag = Tag(name="Comentario", description="Adição de um comentário à um produtos cadastrado na base")
+home_tag = Tag(name="Documentação", description="Documentação: Swagger")
+paciente_tag = Tag(
+    name="Paciente", description="Adição, Alteração, visualização e remoção de pacientes à base")
 
 
 @app.get('/', tags=[home_tag])
 def home():
-    """Redireciona para /openapi, tela que permite a escolha do estilo de documentação.
+    """Redireciona para /openapi/swagger, apresentando assim a documentação criada pelo Swagger.
     """
-    return redirect('/openapi')
+    return redirect('/openapi/swagger')
 
 
-# @app.post('/produto', tags=[produto_tag],
-#           responses={"200": ProdutoViewSchema, "409": ErrorSchema, "400": ErrorSchema})
-# def add_produto(form: ProdutoSchema):
-#     """Adiciona um novo Produto à base de dados
+@app.post('/paciente', tags=[paciente_tag],
+          responses={"200": PacienteViewSchema, "409": ErrorSchema, "400": ErrorSchema})
+def add_paciente(form: PacienteSchema):
+    """Adiciona um novo Paciente à base de dados
 
-#     Retorna uma representação dos produtos e comentários associados.
+    Retorna uma representação do paciente.
+    """
+    paciente = Paciente(
+        cpf=form.cpf,
+        nome=form.nome,
+        data_nascimento=form.data_nascimento,
+        sexo=form.sexo,
+        cep=form.cep,
+        endereco=form.endereco,
+        telefone=form.telefone,
+        email=form.email
+    )
+    logger.debug(f"Adicionando paciente de nome: '{paciente.nome}'")
+    try:
+        # criando conexão com a base
+        session = Session()
+        # adicionando paciente
+        session.add(paciente)
+        # efetivando o camando de adição de novo item na tabela
+        session.commit()
+        logger.debug(f"Adicionado paciente de nome: '{paciente.nome}'")
+        return apresenta_paciente(paciente), 200
+
+    except IntegrityError as e:
+        # como a duplicidade do nome é a provável razão do IntegrityError
+        error_msg = "Paciente de mesmo nome já salvo na base :/"
+        logger.warning(f"Erro ao adicionar paciente '{
+                       paciente.nome}', {error_msg}")
+        return {"message": error_msg}, 409
+
+    except Exception as e:
+        # caso um erro fora do previsto
+        error_msg = "Não foi possível salvar novo item :/"
+        logger.warning(f"Erro ao adicionar paciente '{
+                       paciente.nome}', {error_msg}")
+        return {"message": error_msg}, 400
+
+
+# @app.get('/pacientes', tags=[paciente_tag],
+#          responses={"200": ListagemPacientesSchema, "404": ErrorSchema})
+# def get_pacientes():
+#     """Faz a busca por todos os Paciente cadastrados
+
+#     Retorna uma representação da listagem de pacientes.
 #     """
-#     produto = Produto(
-#         nome=form.nome,
-#         quantidade=form.quantidade,
-#         valor=form.valor)
-#     logger.debug(f"Adicionando produto de nome: '{produto.nome}'")
-#     try:
-#         # criando conexão com a base
-#         session = Session()
-#         # adicionando produto
-#         session.add(produto)
-#         # efetivando o camando de adição de novo item na tabela
-#         session.commit()
-#         logger.debug(f"Adicionado produto de nome: '{produto.nome}'")
-#         return apresenta_produto(produto), 200
-
-#     except IntegrityError as e:
-#         # como a duplicidade do nome é a provável razão do IntegrityError
-#         error_msg = "Produto de mesmo nome já salvo na base :/"
-#         logger.warning(f"Erro ao adicionar produto '{produto.nome}', {error_msg}")
-#         return {"mesage": error_msg}, 409
-
-#     except Exception as e:
-#         # caso um erro fora do previsto
-#         error_msg = "Não foi possível salvar novo item :/"
-#         logger.warning(f"Erro ao adicionar produto '{produto.nome}', {error_msg}")
-#         return {"mesage": error_msg}, 400
-
-
-# @app.get('/produtos', tags=[produto_tag],
-#          responses={"200": ListagemProdutosSchema, "404": ErrorSchema})
-# def get_produtos():
-#     """Faz a busca por todos os Produto cadastrados
-
-#     Retorna uma representação da listagem de produtos.
-#     """
-#     logger.debug(f"Coletando produtos ")
+#     logger.debug(f"Coletando pacientes ")
 #     # criando conexão com a base
 #     session = Session()
 #     # fazendo a busca
-#     produtos = session.query(Produto).all()
+#     pacientes = session.query(Paciente).all()
 
-#     if not produtos:
-#         # se não há produtos cadastrados
-#         return {"produtos": []}, 200
+#     if not pacientes:
+#         # se não há pacientes cadastrados
+#         return {"pacientes": []}, 200
 #     else:
-#         logger.debug(f"%d rodutos econtrados" % len(produtos))
-#         # retorna a representação de produto
-#         print(produtos)
-#         return apresenta_produtos(produtos), 200
+#         logger.debug(f"%d rodutos econtrados" % len(pacientes))
+#         # retorna a representação de paciente
+#         print(pacientes)
+#         return apresenta_pacientes(pacientes), 200
 
 
-# @app.get('/produto', tags=[produto_tag],
-#          responses={"200": ProdutoViewSchema, "404": ErrorSchema})
-# def get_produto(query: ProdutoBuscaSchema):
-#     """Faz a busca por um Produto a partir do id do produto
+# @app.get('/paciente', tags=[paciente_tag],
+#          responses={"200": PacienteViewSchema, "404": ErrorSchema})
+# def get_paciente(query: PacienteBuscaSchema):
+#     """Faz a busca por um Paciente a partir do id do paciente
 
-#     Retorna uma representação dos produtos e comentários associados.
+#     Retorna uma representação dos pacientes e comentários associados.
 #     """
-#     produto_id = query.id
-#     logger.debug(f"Coletando dados sobre produto #{produto_id}")
+#     paciente_id = query.id
+#     logger.debug(f"Coletando dados sobre paciente #{paciente_id}")
 #     # criando conexão com a base
 #     session = Session()
 #     # fazendo a busca
-#     produto = session.query(Produto).filter(Produto.id == produto_id).first()
+#     paciente = session.query(Paciente).filter(Paciente.id == paciente_id).first()
 
-#     if not produto:
-#         # se o produto não foi encontrado
-#         error_msg = "Produto não encontrado na base :/"
-#         logger.warning(f"Erro ao buscar produto '{produto_id}', {error_msg}")
+#     if not paciente:
+#         # se o paciente não foi encontrado
+#         error_msg = "Paciente não encontrado na base :/"
+#         logger.warning(f"Erro ao buscar paciente '{paciente_id}', {error_msg}")
 #         return {"mesage": error_msg}, 404
 #     else:
-#         logger.debug(f"Produto econtrado: '{produto.nome}'")
-#         # retorna a representação de produto
-#         return apresenta_produto(produto), 200
+#         logger.debug(f"Paciente econtrado: '{paciente.nome}'")
+#         # retorna a representação de paciente
+#         return apresenta_paciente(paciente), 200
 
 
-# @app.delete('/produto', tags=[produto_tag],
-#             responses={"200": ProdutoDelSchema, "404": ErrorSchema})
-# def del_produto(query: ProdutoBuscaSchema):
-#     """Deleta um Produto a partir do nome de produto informado
+# @app.delete('/paciente', tags=[paciente_tag],
+#             responses={"200": PacienteDelSchema, "404": ErrorSchema})
+# def del_paciente(query: PacienteBuscaSchema):
+#     """Deleta um Paciente a partir do nome de paciente informado
 
 #     Retorna uma mensagem de confirmação da remoção.
 #     """
-#     produto_nome = unquote(unquote(query.nome))
-#     print(produto_nome)
-#     logger.debug(f"Deletando dados sobre produto #{produto_nome}")
+#     paciente_nome = unquote(unquote(query.nome))
+#     print(paciente_nome)
+#     logger.debug(f"Deletando dados sobre paciente #{paciente_nome}")
 #     # criando conexão com a base
 #     session = Session()
 #     # fazendo a remoção
-#     count = session.query(Produto).filter(Produto.nome == produto_nome).delete()
+#     count = session.query(Paciente).filter(Paciente.nome == paciente_nome).delete()
 #     session.commit()
 
 #     if count:
 #         # retorna a representação da mensagem de confirmação
-#         logger.debug(f"Deletado produto #{produto_nome}")
-#         return {"mesage": "Produto removido", "id": produto_nome}
+#         logger.debug(f"Deletado paciente #{paciente_nome}")
+#         return {"mesage": "Paciente removido", "id": paciente_nome}
 #     else:
-#         # se o produto não foi encontrado
-#         error_msg = "Produto não encontrado na base :/"
-#         logger.warning(f"Erro ao deletar produto #'{produto_nome}', {error_msg}")
+#         # se o paciente não foi encontrado
+#         error_msg = "Paciente não encontrado na base :/"
+#         logger.warning(f"Erro ao deletar paciente #'{paciente_nome}', {error_msg}")
 #         return {"mesage": error_msg}, 404
 
 
 # @app.post('/cometario', tags=[comentario_tag],
-#           responses={"200": ProdutoViewSchema, "404": ErrorSchema})
+#           responses={"200": PacienteViewSchema, "404": ErrorSchema})
 # def add_comentario(form: ComentarioSchema):
-#     """Adiciona de um novo comentário à um produtos cadastrado na base identificado pelo id
+#     """Adiciona de um novo comentário à um pacientes cadastrado na base identificado pelo id
 
-#     Retorna uma representação dos produtos e comentários associados.
+#     Retorna uma representação dos pacientes e comentários associados.
 #     """
-#     produto_id  = form.produto_id
-#     logger.debug(f"Adicionando comentários ao produto #{produto_id}")
+#     paciente_id  = form.paciente_id
+#     logger.debug(f"Adicionando comentários ao paciente #{paciente_id}")
 #     # criando conexão com a base
 #     session = Session()
-#     # fazendo a busca pelo produto
-#     produto = session.query(Produto).filter(Produto.id == produto_id).first()
+#     # fazendo a busca pelo paciente
+#     paciente = session.query(Paciente).filter(Paciente.id == paciente_id).first()
 
-#     if not produto:
-#         # se produto não encontrado
-#         error_msg = "Produto não encontrado na base :/"
-#         logger.warning(f"Erro ao adicionar comentário ao produto '{produto_id}', {error_msg}")
+#     if not paciente:
+#         # se paciente não encontrado
+#         error_msg = "Paciente não encontrado na base :/"
+#         logger.warning(f"Erro ao adicionar comentário ao paciente '{paciente_id}', {error_msg}")
 #         return {"mesage": error_msg}, 404
 
 #     # criando o comentário
 #     texto = form.texto
 #     comentario = Comentario(texto)
 
-#     # adicionando o comentário ao produto
-#     produto.adiciona_comentario(comentario)
+#     # adicionando o comentário ao paciente
+#     paciente.adiciona_comentario(comentario)
 #     session.commit()
 
-#     logger.debug(f"Adicionado comentário ao produto #{produto_id}")
+#     logger.debug(f"Adicionado comentário ao paciente #{paciente_id}")
 
-#     # retorna a representação de produto
-#     return apresenta_produto(produto), 200
+#     # retorna a representação de paciente
+#     return apresenta_paciente(paciente), 200
