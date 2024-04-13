@@ -9,6 +9,8 @@ from logger import logger
 from schemas import *
 from flask_cors import CORS
 
+from datetime import datetime
+
 info = Info(title="Pacientes API", version="1.0.0")
 app = OpenAPI(__name__, info=info)
 CORS(app)
@@ -57,15 +59,13 @@ def add_paciente(form: PacienteSchema):
     except IntegrityError as e:
         # como a duplicidade do nome é a provável razão do IntegrityError
         error_msg = "Paciente de mesmo nome já salvo na base :/"
-        logger.warning(f"Erro ao adicionar paciente '{
-                       paciente.nome}', {error_msg}")
+        logger.warning(f"Erro ao adicionar paciente '{paciente.nome}', {error_msg}")
         return {"message": error_msg}, 409
 
     except Exception as e:
         # caso um erro fora do previsto
         error_msg = "Não foi possível salvar novo item :/"
-        logger.warning(f"Erro ao adicionar paciente '{
-                       paciente.nome}', {error_msg}")
+        logger.warning(f"Erro ao adicionar paciente '{paciente.nome}', {error_msg}")
         return {"message": error_msg}, 400
 
 
@@ -117,62 +117,27 @@ def get_pacientes():
 #         return apresenta_paciente(paciente), 200
 
 
-# @app.delete('/paciente', tags=[paciente_tag],
-#             responses={"200": PacienteDelSchema, "404": ErrorSchema})
-# def del_paciente(query: PacienteBuscaSchema):
-#     """Deleta um Paciente a partir do nome de paciente informado
+@app.delete('/paciente', tags=[paciente_tag],
+            responses={"200": PacienteDelSchema, "404": ErrorSchema})
+def del_paciente(query: PacienteBuscaSchema):
+    """Deleta um Paciente a partir do cpf informado
 
-#     Retorna uma mensagem de confirmação da remoção.
-#     """
-#     paciente_nome = unquote(unquote(query.nome))
-#     print(paciente_nome)
-#     logger.debug(f"Deletando dados sobre paciente #{paciente_nome}")
-#     # criando conexão com a base
-#     session = Session()
-#     # fazendo a remoção
-#     count = session.query(Paciente).filter(Paciente.nome == paciente_nome).delete()
-#     session.commit()
+    Retorna uma mensagem de confirmação da remoção.
+    """
+    cpf_paciente = query.cpf
+    logger.debug(f"Deletando dados do paciente de cpf #{cpf_paciente}")
+    # criando conexão com a base
+    session = Session()
+    # fazendo a remoção
+    count = session.query(Paciente).filter(Paciente.cpf == cpf_paciente).delete()
+    session.commit()
 
-#     if count:
-#         # retorna a representação da mensagem de confirmação
-#         logger.debug(f"Deletado paciente #{paciente_nome}")
-#         return {"mesage": "Paciente removido", "id": paciente_nome}
-#     else:
-#         # se o paciente não foi encontrado
-#         error_msg = "Paciente não encontrado na base :/"
-#         logger.warning(f"Erro ao deletar paciente #'{paciente_nome}', {error_msg}")
-#         return {"mesage": error_msg}, 404
-
-
-# @app.post('/cometario', tags=[comentario_tag],
-#           responses={"200": PacienteViewSchema, "404": ErrorSchema})
-# def add_comentario(form: ComentarioSchema):
-#     """Adiciona de um novo comentário à um pacientes cadastrado na base identificado pelo id
-
-#     Retorna uma representação dos pacientes e comentários associados.
-#     """
-#     paciente_id  = form.paciente_id
-#     logger.debug(f"Adicionando comentários ao paciente #{paciente_id}")
-#     # criando conexão com a base
-#     session = Session()
-#     # fazendo a busca pelo paciente
-#     paciente = session.query(Paciente).filter(Paciente.id == paciente_id).first()
-
-#     if not paciente:
-#         # se paciente não encontrado
-#         error_msg = "Paciente não encontrado na base :/"
-#         logger.warning(f"Erro ao adicionar comentário ao paciente '{paciente_id}', {error_msg}")
-#         return {"mesage": error_msg}, 404
-
-#     # criando o comentário
-#     texto = form.texto
-#     comentario = Comentario(texto)
-
-#     # adicionando o comentário ao paciente
-#     paciente.adiciona_comentario(comentario)
-#     session.commit()
-
-#     logger.debug(f"Adicionado comentário ao paciente #{paciente_id}")
-
-#     # retorna a representação de paciente
-#     return apresenta_paciente(paciente), 200
+    if count:
+        # retorna a representação da mensagem de confirmação
+        logger.debug(f"Paciente deletetado. CPF #{cpf_paciente}")
+        return {"message": "Paciente removido com sucesso", "cpf": cpf_paciente}
+    else:
+        # se o paciente não foi encontrado
+        error_msg = "Paciente não encontrado na base :/"
+        logger.warning(f"Erro ao deletar o paciente de CPF #'{cpf_paciente}', {error_msg}")
+        return {"message": error_msg}, 404

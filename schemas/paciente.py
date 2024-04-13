@@ -61,7 +61,6 @@ class PacienteViewSchema(BaseModel):
     email: str = "teste@teste.com"
     data_insercao: date = date.today()
 
-
 class PacienteDelSchema(BaseModel):
     """ Define como deve ser a estrutura do dado retornado após uma requisição
         de remoção.
@@ -78,6 +77,7 @@ def apresenta_paciente(paciente: Paciente):
         "cpf": paciente.cpf,
         "nome": paciente.nome,
         "data_nascimento": paciente.data_nascimento,
+        "sexo": paciente.sexo,
         "cep": paciente.cep,
         "endereco": paciente.endereco,
         "telefone": paciente.telefone,
