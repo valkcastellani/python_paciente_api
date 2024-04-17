@@ -92,29 +92,29 @@ def get_pacientes():
         return apresenta_pacientes(pacientes), 200
 
 
-# @app.get('/paciente', tags=[paciente_tag],
-#          responses={"200": PacienteViewSchema, "404": ErrorSchema})
-# def get_paciente(query: PacienteBuscaSchema):
-#     """Faz a busca por um Paciente a partir do id do paciente
+@app.get('/paciente', tags=[paciente_tag],
+         responses={"200": PacienteViewSchema, "404": ErrorSchema})
+def get_paciente(query: PacienteBuscaSchema):
+    """Faz a busca por um Paciente a partir do id do paciente
 
-#     Retorna uma representação dos pacientes e comentários associados.
-#     """
-#     paciente_id = query.id
-#     logger.debug(f"Coletando dados sobre paciente #{paciente_id}")
-#     # criando conexão com a base
-#     session = Session()
-#     # fazendo a busca
-#     paciente = session.query(Paciente).filter(Paciente.id == paciente_id).first()
+    Retorna uma representação dos pacientes e comentários associados.
+    """
+    cpf_paciente = query.cpf
+    logger.debug(f"Coletando dados sobre paciente de CPF #{cpf_paciente}")
+    # criando conexão com a base
+    session = Session()
+    # fazendo a busca
+    paciente = session.query(Paciente).filter(Paciente.cpf == cpf_paciente).first()
 
-#     if not paciente:
-#         # se o paciente não foi encontrado
-#         error_msg = "Paciente não encontrado na base :/"
-#         logger.warning(f"Erro ao buscar paciente '{paciente_id}', {error_msg}")
-#         return {"mesage": error_msg}, 404
-#     else:
-#         logger.debug(f"Paciente econtrado: '{paciente.nome}'")
-#         # retorna a representação de paciente
-#         return apresenta_paciente(paciente), 200
+    if not paciente:
+        # se o paciente não foi encontrado
+        error_msg = "Paciente não encontrado na base :/"
+        logger.warning(f"Erro ao buscar paciente de CPF #'{cpf_paciente}', {error_msg}")
+        return {"mesage": error_msg}, 404
+    else:
+        logger.debug(f"Paciente encontrado: '{paciente.nome}'")
+        # retorna a representação de paciente
+        return apresenta_paciente(paciente), 200
 
 
 @app.delete('/paciente', tags=[paciente_tag],
