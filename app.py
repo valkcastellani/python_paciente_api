@@ -69,6 +69,96 @@ def add_paciente(form: PacienteSchema):
         return {"message": error_msg}, 400
 
 
+# @app.put('/paciente', tags=[paciente_tag],
+#           responses={"200": PacienteViewSchema, "409": ErrorSchema, "400": ErrorSchema})
+# def alter_paciente(form: PacienteSchema):
+#     """Altera os dados de um Paciente na base de dados
+
+#     Retorna uma representação do paciente.
+#     """
+#     cpf_paciente = form.cpf
+#     logger.debug(f"Coletando dados sobre paciente de CPF #{cpf_paciente}")
+#     # criando conexão com a base
+#     session = Session()
+#     # fazendo a busca
+#     paciente_to_update = session.query(Paciente).filter(Paciente.cpf == cpf_paciente).first();
+#     if (paciente_to_update): 
+#         try:
+#             # alterando paciente
+#             paciente = session.scalars(paciente_to_update).one();
+#             paciente.nome=form.nome,
+#             paciente.data_nascimento=form.data_nascimento,
+#             paciente.sexo=form.sexo,
+#             paciente.cep=form.cep,
+#             paciente.endereco=form.endereco,
+#             paciente.telefone=form.telefone,
+#             paciente.email=form.email
+        
+#             logger.debug(f"Alterando paciente de nome: '{paciente.nome}'")
+#             # efetivando a alteração do paciente na tabela
+#             session.commit()
+#             logger.debug(f"paciente de nome: '{paciente.nome}' alterado.")
+#             return apresenta_paciente(paciente), 200
+
+#         except IntegrityError as e:
+#             # como a duplicidade do nome é a provável razão do IntegrityError
+#             error_msg = "Paciente de mesmo nome já salvo na base :/"
+#             logger.warning(f"Erro ao adicionar paciente '{paciente.nome}', {error_msg}")
+#             return {"message": error_msg}, 409
+
+#         except Exception as e:
+#             # caso um erro fora do previsto
+#             error_msg = "Não foi possível salvar novo item :/"
+#             logger.warning(f"Erro ao adicionar paciente '{paciente.nome}', {error_msg}")
+#             return {"message": error_msg}, 400
+#     else:
+#         # caso um erro fora do previsto
+#         error_msg = "Não foi possível alterar os dados do paciente :/"
+#         logger.warning(f"Erro ao alterar o paciente '{paciente.nome}', {error_msg}")
+#         return {"message": error_msg}, 400
+
+@app.put('/paciente', tags=[paciente_tag],
+          responses={"200": PacienteViewSchema, "404": ErrorSchema, "400": ErrorSchema})
+def atualizar_paciente(form: PacienteSchema):
+    """Atualiza um Paciente existente na base de dados.
+
+    O paciente a ser atualizado é identificado pelo 'paciente_cpf' na URL.
+    A representação atualizada do paciente é retornada.
+    """
+
+    # criando conexão com a base
+    session = Session()
+    paciente = session.query(Paciente).filter(Paciente.cpf == form.cpf).first();
+
+    if not paciente:
+        # Paciente não encontrado
+        return {"message": f"Paciente com CPF #'{form.cpf}' não encontrado."}, 404
+
+    # Atualizando os campos do paciente
+    paciente.cpf = form.cpf
+    paciente.nome = form.nome
+    paciente.data_nascimento = form.data_nascimento
+    paciente.sexo = form.sexo
+    paciente.cep = form.cep
+    paciente.endereco = form.endereco
+    paciente.telefone = form.telefone
+    paciente.email = form.email
+
+    logger.debug(f"Atualizando paciente de CPF #'{paciente.cpf}'")
+
+    try:
+        # efetivando a atualização do paciente
+        session.commit()
+        logger.debug(f"Paciente de CPF #'{paciente.cpf}' atualizado com sucesso.")
+        return apresenta_paciente(paciente), 200
+
+    except Exception as e:
+        # caso um erro fora do previsto
+        error_msg = "Não foi possível atualizar o paciente."
+        logger.warning(f"Erro ao atualizar paciente de CPF #'{paciente.cpf}', {error_msg}")
+        return {"message": error_msg}, 400
+        
+
 @app.get('/pacientes', tags=[paciente_tag],
          responses={"200": ListagemPacientesSchema, "404": ErrorSchema})
 def get_pacientes():
@@ -110,7 +200,7 @@ def get_paciente(query: PacienteBuscaSchema):
         # se o paciente não foi encontrado
         error_msg = "Paciente não encontrado na base :/"
         logger.warning(f"Erro ao buscar paciente de CPF #'{cpf_paciente}', {error_msg}")
-        return {"mesage": error_msg}, 404
+        return {"message": error_msg}, 404
     else:
         logger.debug(f"Paciente encontrado: '{paciente.nome}'")
         # retorna a representação de paciente
