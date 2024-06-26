@@ -39,3 +39,48 @@ automaticamente após uma mudança no código fonte.
 ```
 
 Abra o [http://localhost:5000/#/](http://localhost:5000/#/) no navegador para verificar o status da API em execução.
+
+
+# Testando a API de Pacientes com Locust
+
+Este projeto inclui um arquivo de teste para realizar testes de carga na API usando o Locust. Siga as instruções abaixo para configurar e executar o teste.
+
+## Pré-requisitos
+
+Antes de começar, você precisa ter o Locust instalado. Você pode instalá-lo usando pip:
+
+```bash
+pip3 install locust
+```
+
+## Executando o teste de carga
+
+O arquivo de teste está localizado na pasta `test` e seu nome é `load_test.py`. Para executar o teste de carga, siga os passos abaixo:
+
+ 1. Certifique-se de que a aplicação a ser testada está rodando no **`localhost`** na porta **`5000`**.
+ 2. Navegue até o diretório raiz do projeto: 
+```bash
+cd caminho/para/o/projeto
+```
+ 3. Execute o Locust apontando para o arquivo de teste:
+```bash
+locust -f test/load_test.py -H http://localhost:5000
+```
+ 4. Abra o navegador e acesse o seguinte endereço para abrir a interface web do Locust:
+```bash
+http://localhost:8089
+```
+ 5. Na interface web do Locust, configure o número de usuários simultâneos (Number of total users to simulate) e a taxa de geração de novos usuários (Spawn rate).
+ 6. Clique no botão "Start swarming" para iniciar o teste de carga.
+
+### Configurações do `load_test.py`
+
+O arquivo **`load_test.py`** contém a definição das tarefas que serão executadas durante o teste de carga. Você pode personalizar este arquivo para atender às necessidades específicas do seu teste.
+
+### Analisando os resultados
+
+Após iniciar o teste de carga, a interface web do Locust exibirá gráficos e estatísticas em tempo real, permitindo que você monitore o desempenho da sua API. Você pode usar essas informações para identificar possíveis gargalos e otimizar o desempenho da sua API.
+
+### Contribuindo
+
+Se você encontrar qualquer problema ou tiver sugestões para melhorar os testes de carga, sinta-se à vontade para abrir uma issue ou enviar um pull request.
