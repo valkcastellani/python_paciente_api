@@ -14,14 +14,15 @@ class LoadTest(HttpUser):
 
         # criando o paciente
         paciente = {
-            "cpf": "18866259055",
-            "nome": "João da Silva",
-            "data_nascimento": str(date.today()),
+            "cpf": 18866259055,
+            "nome": "João da Silva (Duplicado)",
+            "data_nascimento": date.today(),
             "sexo": "M",
-            "cep": "22775024",
-            "endereco": "Avenida Ator José Wilker",
-            "telefone": "2121211234",
-            "email": "teste@teste.com",
+            "cep": 22775024,
+            "numero": "100",
+            "complemento": "Apto 1801",
+            "telefone": 2121211234,
+            "email": "teste@duplicado.com",
         }
 
         # configurando a requisição

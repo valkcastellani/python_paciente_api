@@ -16,7 +16,6 @@ class Paciente(Base):
     cep = Column(Integer)
     numero = Column(String(10))
     complemento = Column(String(30))
-    endereco = Column(String(200))
     telefone = Column(Integer)
     email = Column(String(50))
     data_insercao = Column(DateTime, default=datetime.now())
