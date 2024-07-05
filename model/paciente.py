@@ -7,21 +7,33 @@ from model import Base
 
 
 class Paciente(Base):
-    __tablename__ = 'paciente'
+    __tablename__ = "paciente"
 
     cpf = Column("pk_paciente", Integer, primary_key=True)
     nome = Column(String(50), nullable=False)
     data_nascimento = Column(DateTime, nullable=False)
     sexo = Column(String(1))
     cep = Column(Integer)
+    numero = Column(String(10))
+    complemento = Column(String(30))
     endereco = Column(String(200))
     telefone = Column(Integer)
     email = Column(String(50))
     data_insercao = Column(DateTime, default=datetime.now())
 
-    def __init__(self, cpf: int, nome: str, data_nascimento: DateTime,
-                 sexo: str, cep: int, endereco: str, telefone: int,
-                 email: str, data_insercao: Union[DateTime, None] = None):
+    def __init__(
+        self,
+        cpf: int,
+        nome: str,
+        data_nascimento: DateTime,
+        sexo: str,
+        cep: int,
+        numero: str,
+        complemento: str,
+        telefone: int,
+        email: str,
+        data_insercao: Union[DateTime, None] = None,
+    ):
         """
         Cria um Paciente
 
@@ -31,7 +43,8 @@ class Paciente(Base):
             data_nascimento: Data de Nascimento do Paciente
             sexo: Sexo declarado do Paciente
             cep: Cep do endereço do Paciente
-            endereco: Endereço do Paciente
+            numero: Número referente ao endereço do Paciente
+            complemento: Complemento do endereço do Paciente
             telefone: Telefone do Paciente
             email: Email do Paciente
             data_insercao: data de quando o paciente foi inserido à base
@@ -41,7 +54,8 @@ class Paciente(Base):
         self.data_nascimento = data_nascimento
         self.sexo = sexo
         self.cep = cep
-        self.endereco = endereco
+        self.numero = numero
+        self.complemento = complemento
         self.telefone = telefone
         self.email = email
 
