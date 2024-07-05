@@ -40,6 +40,77 @@ automaticamente após uma mudança no código fonte.
 
 Abra o [http://localhost:5000/#/](http://localhost:5000/#/) no navegador para verificar o status da API em execução.
 
+# Executando a API em Contêineres Docker
+
+## Docker Build e Run
+
+Para construir e executar uma imagem Docker a partir de um Dockerfile, siga os passos abaixo:
+
+1. Construindo a imagem com Docker Build:
+
+   Primeiro, navegue até o diretório onde está localizado o Dockerfile e execute o seguinte comando para construir a imagem:
+
+   ```bash
+   docker build -t python_paciente_api:latest .
+   ```
+   - **python_paciente_api** é o nome da imagem. Nesse caso, foi utilizado no nome da nossa API.
+   - **latest** é a tag de identificação da versão da imagem. Nessa caso, foi utilizado latest, pois é a versão mais recente disponibilizada da API.
+   - **.** indica que o Dockerfile está no diretório atual.
+
+2. Iniciando a Imagem com Docker Run:
+
+   Após construir a imagem, você pode iniciar um contêiner a partir dessa imagem com o comando:
+
+   ```bash
+   docker run -d -p 5000:5000 -v ./database:/app/database python_paciente_api:latest
+   ```
+
+   - **-d** inicia o contêiner em modo *detached* (em segundo plano).
+   - **-p 5000:5000** mapeia a porta do host para a porta do contêiner, no formato *porta-do-host:porta-do-contêiner*.
+   - **-v ./database:/app/database** monta um volume (mapeando caminhos no formato */caminho/no/host:/caminho/no/contêiner*), permitindo que dados sejam persistentes no diretório `./database` do host e `/app/database` do contêiner. 
+   - **python_paciente_api:latest** é a imagem que criamos com o comando *docker build* no item 1, no format *nome-da-imagem:tag*.
+
+3. Verificando o Contêiner em Execução:
+
+   Para verificar se o contêiner está em execução, use:
+
+   ```bash
+   docker ps
+   ```
+
+   Ou
+
+   ```bash
+   docker container ls -a
+   ```
+
+   Isso mostrará uma lista dos contêineres em execução.
+
+## Docker Compose
+
+O Docker Compose simplifica a definição e execução de aplicativos Docker de múltiplos contêineres. Ele usa um arquivo docker-compose.yml para configurar os serviços da sua aplicação.
+
+1. Criando e Iniciando os Serviços:
+
+   Para construir e iniciar todos os serviços definidos no arquivo `docker-compose.yml`, use:
+
+   ```bash
+   docker-compose up --build -d
+   ```
+
+   - **--build** reconstrói as imagens se necessário.
+   - **-d** inicia os contêineres em segundo plano (*detached mode*).
+
+2. Parando os Serviços:
+
+   Para parar e remover os contêineres definidos no arquivo `docker-compose.yml`, execute:
+
+   ```bash
+   docker-compose down
+   ```
+
+   Isso irá parar todos os contêineres e remover os recursos criados pelo *docker-compose up*.
+
 # Testando a API de Pacientes com PyTest (Testes Unitários)
 
 ## Como Rodar os Testes
@@ -140,6 +211,6 @@ O arquivo **`load_test.py`** contém a definição das tarefas que serão execut
 
 Após iniciar o teste de carga, a interface web do Locust exibirá gráficos e estatísticas em tempo real, permitindo que você monitore o desempenho da sua API. Você pode usar essas informações para identificar possíveis gargalos e otimizar o desempenho da sua API.
 
-### Contribuindo
+# Contribuindo
 
-Se você encontrar qualquer problema ou tiver sugestões para melhorar os testes de carga, sinta-se à vontade para abrir uma issue ou enviar um pull request.
+Se você encontrar qualquer problema ou tiver sugestões para melhorar a API, os testes unitários, os testes de carga, sinta-se à vontade para abrir uma *issue* ou enviar um *pull request*.
