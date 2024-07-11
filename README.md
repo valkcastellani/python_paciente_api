@@ -54,11 +54,7 @@ Este é o repositório da API de Pacientes do MVP de Clínicas. O MVP é dividid
 
 ---
 
-## Frontend do MVP de Clínicas
-
----
-
-## Como executar
+# Como executar
 
 Será necessário ter todas as libs python listadas no `requirements.txt` instaladas.
 Após clonar o repositório, é necessário ir ao diretório raiz, pelo terminal, para poder executar os comandos descritos abaixo.
@@ -66,7 +62,7 @@ Após clonar o repositório, é necessário ir ao diretório raiz, pelo terminal
 > É fortemente indicado o uso de ambientes virtuais do tipo [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).
 
 ```
-(env)$ pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Este comando instala as dependências/bibliotecas, descritas no arquivo `requirements.txt`.
@@ -74,17 +70,19 @@ Este comando instala as dependências/bibliotecas, descritas no arquivo `require
 Para executar a API basta executar:
 
 ```
-(env)$ flask run --host 0.0.0.0 --port 5000
+flask run --host 0.0.0.0 --port 5000
 ```
 
 Em modo de desenvolvimento é recomendado executar utilizando o parâmetro reload, que reiniciará o servidor
 automaticamente após uma mudança no código fonte.
 
 ```
-(env)$ flask run --host 0.0.0.0 --port 5000 --reload
+flask run --host 0.0.0.0 --port 5000 --reload
 ```
 
 Abra o [http://localhost:5000/#/](http://localhost:5000/#/) no navegador para verificar o status da API em execução.
+
+---
 
 # Executando a API em Contêineres Docker
 
@@ -157,6 +155,8 @@ O Docker Compose simplifica a definição e execução de aplicativos Docker de 
    ```
 
    Isso irá parar todos os contêineres e remover os recursos criados pelo _docker-compose up_.
+
+---
 
 # Testando a API de Pacientes com PyTest (Testes Unitários)
 
@@ -257,6 +257,8 @@ O arquivo **`load_test.py`** contém a definição das tarefas que serão execut
 ### Analisando os resultados
 
 Após iniciar o teste de carga, a interface web do Locust exibirá gráficos e estatísticas em tempo real, permitindo que você monitore o desempenho da sua API. Você pode usar essas informações para identificar possíveis gargalos e otimizar o desempenho da sua API.
+
+---
 
 # Contribuindo
 
