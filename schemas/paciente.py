@@ -89,19 +89,20 @@ def apresenta_pacientes(pacientes: List[Paciente]):
 
     result = []
     for paciente in pacientes:
-        api_externa = f"https://viacep.com.br/ws/{paciente.cep}/json/"
         endereco = ""
-        try:
-            response = requests.get(api_externa)
-            if response.status_code == 200:
-                data = response.json()
-                if "erro" not in data:
-                    endereco = (
-                        f"{data.get('logradouro')}, {paciente.numero}, {paciente.complemento}, "
-                        f"{data.get('bairro')}, {data.get('localidade')} - {data.get('uf')} - {data.get('cep')}"
-                    )
-        except:
-            endereco = ""
+        if paciente.cep > 0:
+            api_externa = f"https://viacep.com.br/ws/{paciente.cep}/json/"
+            try:
+                response = requests.get(api_externa)
+                if response.status_code == 200:
+                    data = response.json()
+                    if "erro" not in data:
+                        endereco = (
+                            f"{data.get('logradouro')}, {paciente.numero}, {paciente.complemento}, "
+                            f"{data.get('bairro')}, {data.get('localidade')} - {data.get('uf')} - {data.get('cep')}"
+                        )
+            except:
+                endereco = ""
 
         result.append(
             {
@@ -122,30 +123,31 @@ def apresenta_paciente(paciente: Paciente):
     Retorna uma representação do paciente seguindo o schema definido em PacienteViewSchema.
     """
 
-    api_externa = f"https://viacep.com.br/ws/{paciente.cep}/json/"
-
     logradouro = ""
     bairro = ""
     cidade = ""
     estado = ""
     endereco = ""
 
-    try:
-        response = requests.get(api_externa)
+    if paciente.cep > 0:
+        api_externa = f"https://viacep.com.br/ws/{paciente.cep}/json/"
 
-        if response.status_code == 200:
-            data = response.json()
-            if "erro" not in data:
-                logradouro = data.get("logradouro")
-                bairro = data.get("bairro")
-                cidade = data.get("localidade")
-                estado = data.get("uf")
-                endereco = (
-                    f"{data.get('logradouro')}, {paciente.numero}, {paciente.complemento}, "
-                    f"{data.get('bairro')}, {data.get('localidade')} - {data.get('uf')} - {data.get('cep')}"
-                )
-    except:
-        raise
+        try:
+            response = requests.get(api_externa)
+
+            if response.status_code == 200:
+                data = response.json()
+                if "erro" not in data:
+                    logradouro = data.get("logradouro")
+                    bairro = data.get("bairro")
+                    cidade = data.get("localidade")
+                    estado = data.get("uf")
+                    endereco = (
+                        f"{data.get('logradouro')}, {paciente.numero}, {paciente.complemento}, "
+                        f"{data.get('bairro')}, {data.get('localidade')} - {data.get('uf')} - {data.get('cep')}"
+                    )
+        except:
+            endereco = ""
 
     return {
         "cpf": paciente.cpf,
