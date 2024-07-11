@@ -63,7 +63,7 @@ def get_pacientes():
 )
 def get_paciente(path: PacienteBuscaSchema):
     """
-    Faz a busca por um Paciente a partir do id do paciente
+    Faz a busca por um Paciente pelo 'cpf' na URL.
 
     Retorna uma representação dos pacientes e comentários associados.
     """
@@ -91,7 +91,7 @@ def get_paciente(path: PacienteBuscaSchema):
 )
 def del_paciente(path: PacienteBuscaSchema):
     """
-    Deleta um Paciente a partir do cpf informado
+    Deleta um Paciente pelo 'cpf' na URL.
 
     Retorna uma mensagem de confirmação da remoção.
     """
@@ -123,7 +123,7 @@ def del_paciente(path: PacienteBuscaSchema):
 )
 def add_paciente(path: PacienteBuscaSchema, form: PacienteSchema):
     """
-    Adiciona um novo Paciente à base de dados
+    Adiciona um novo Paciente à base de dados.
 
     Retorna uma representação do paciente.
     """
@@ -172,7 +172,7 @@ def atualizar_paciente(path: PacienteBuscaSchema, form: PacienteSchema):
     """
     Atualiza um Paciente existente na base de dados.
 
-    O paciente a ser atualizado é identificado pelo 'paciente_cpf' na URL.
+    O paciente a ser atualizado é identificado pelo 'cpf' na URL.
     A representação atualizada do paciente é retornada.
     """
 

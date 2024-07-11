@@ -21,6 +21,9 @@ Este é o repositório da API de Pacientes do MVP de Clínicas. O MVP é dividid
       - Alterar informações de um paciente (PUT).
     - Realiza consultas ao VIACEP para obter informações de endereço com base no CEP informado pelo usuário.
 
+   Apesar de conseguir utilizar a API através de linha de comando ou algum aplicativo, o frontend deste MVP foi disponibilizado no endereço [https://github.com/valkcastellani/mvp_clinica_frontend_react](https://github.com/valkcastellani/mvp_clinica_frontend_react).
+
+
 2.  **API de Pacientes:**
 
     - Desenvolvida com a linguagem Python e o framework web Flask.
@@ -52,8 +55,6 @@ Este é o repositório da API de Pacientes do MVP de Clínicas. O MVP é dividid
 ---
 
 ## Frontend do MVP de Clínicas
-
-Apesar de conseguir utilizar a API através de linha de comando ou algum aplicativo, no âmbito deste MVP foi disponibilizado o frontend no endereço [https://github.com/valkcastellani/mvp_clinica_frontend](https://github.com/valkcastellani/mvp_clinica_frontend).
 
 ---
 
