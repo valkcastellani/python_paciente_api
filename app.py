@@ -9,8 +9,6 @@ from logger import logger
 from schemas import *
 from flask_cors import CORS
 
-from datetime import datetime
-
 info = Info(title="Pacientes API", version="2.0.0")
 app = OpenAPI(__name__, info=info)
 CORS(app)
@@ -69,17 +67,16 @@ def get_paciente(path: PacienteBuscaSchema):
 
     Retorna uma representação dos pacientes e comentários associados.
     """
-    cpf_paciente = path.cpf
-    logger.debug(f"Coletando dados sobre paciente de CPF #{cpf_paciente}")
+    logger.debug(f"Coletando dados sobre paciente de CPF #{path.cpf}")
     # criando conexão com a base
     session = Session()
     # fazendo a busca
-    paciente = session.query(Paciente).filter(Paciente.cpf == cpf_paciente).first()
+    paciente = session.query(Paciente).filter(Paciente.cpf == path.cpf).first()
 
     if not paciente:
         # se o paciente não foi encontrado
         error_msg = "Paciente não encontrado na base :/"
-        logger.warning(f"Erro ao buscar paciente de CPF #'{cpf_paciente}', {error_msg}")
+        logger.warning(f"Erro ao buscar paciente de CPF #'{path.cpf}', {error_msg}")
         return {"message": error_msg}, 404
     else:
         logger.debug(f"Paciente encontrado: '{paciente.nome}'")
@@ -131,17 +128,18 @@ def add_paciente(path: PacienteBuscaSchema, form: PacienteSchema):
     Retorna uma representação do paciente.
     """
     paciente = Paciente(
-        cpf=path.cpf,
+        cpf=int(form.cpf),
         nome=form.nome,
         data_nascimento=form.data_nascimento,
         sexo=form.sexo,
-        cep=form.cep,
+        cep=int(form.cep),
         numero=form.numero,
         complemento=form.complemento,
-        telefone=form.telefone,
+        telefone=int(form.telefone),
         email=form.email,
     )
     logger.debug(f"Adicionando paciente de nome: '{paciente.nome}'")
+
     try:
         # criando conexão com a base
         session = Session()

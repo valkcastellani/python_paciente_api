@@ -1,8 +1,53 @@
-# API do MVP de Clínicas
+# Descrição do MVP Clínicas
 
-Este projeto surge com o propósito de oferecer uma solução para a gestão da agenda de uma amiga, fisioterapeuta. Concebido como parte integrante do currículo do curso de Pós-Graduação em Engenharia de Software da PUC-Rio, o desenvolvimento foi realizado como projeto do módulo de Desenvolvimento Full Stack Básico.
+Este projeto foi criado com o objetivo de oferecer uma solução para a gestão da agenda de uma amiga fisioterapeuta. Desenvolvido como parte do currículo do curso de Pós-Graduação em Engenharia de Software da PUC-Rio, seu desenvolvimento inicial ocorreu no módulo de Desenvolvimento Full Stack Básico. Atualmente, o projeto inclui implementações realizadas para o módulo de Arquitetura de Software.
 
-Utilizando a linguagem Python com o framework web Flask, este MVP visa proporcionar uma experiência exemplar no controle de pacientes, demonstrando de maneira clara e concisa as operações essenciais de um sistema CRUD (Create, Read, Update and Delete) no contexto do cadastro de pacientes via endpoints que podem ser consultados via documentação Swagger.
+Este é o repositório da API de Pacientes do MVP de Clínicas. O MVP é dividido em quatro componentes principais: dois componentes internos e dois componentes externos.
+
+![Diagrama do MVP](https://github.com/valkcastellani/mvp_clinica_frontend_react/blob/master/img/esquema_mvp.png)
+
+## Componentes Internos
+
+1.  **Frontend:**
+
+    - Desenvolvido com React, TypeScript, PrimeReact, PrimeFlex e PrimeIcons.
+    - Realiza a comunicação com o Auth0 para autenticação de usuários.
+    - Após a autenticação, o frontend se conecta com a API de Pacientes.
+    - Permite ao usuário:
+      - Buscar todos os pacientes (GET).
+      - Buscar um paciente específico pelo CPF (GET).
+      - Deletar um paciente (DELETE).
+      - Incluir um novo paciente (POST).
+      - Alterar informações de um paciente (PUT).
+    - Realiza consultas ao VIACEP para obter informações de endereço com base no CEP informado pelo usuário.
+
+2.  **API de Pacientes:**
+
+    - Desenvolvida com a linguagem Python e o framework web Flask.
+    - Expõe endpoints para operações CRUD (Create, Read, Update, Delete) de pacientes.
+    - Não inclui a autenticação do token do Auth0 por fins didáticos.
+    - Nas consultas, a API também realiza chamadas ao VIACEP para retornar dados de endereço.
+    - A documentação desta API é fornecida seguindo o padrão OpenAPI através do Swagger.
+
+## Componentes Externos
+
+1.  **Auth0:**
+
+    - Responsável pela autenticação de usuários.
+    - O frontend se comunica com este serviço para autenticar os usuários antes de permitir o acesso à API de Pacientes.
+
+2.  **VIACEP:**
+
+    - Serviço externo utilizado para obter informações de endereço com base no CEP.
+    - Tanto o frontend quanto a API de Pacientes realizam chamadas a este serviço para obter dados de endereço.
+
+## Fluxo da Aplicação
+
+1.  O usuário acessa o frontend e é redirecionado para o Auth0 para autenticação.
+2.  Após a autenticação, o frontend se conecta à API de Pacientes.
+3.  O usuário pode realizar operações CRUD na API de Pacientes.
+4.  Ao informar um CEP, o frontend consulta o VIACEP para obter os dados de endereço.
+5.  A API de Pacientes também consulta o VIACEP ao retornar dados de endereço nas suas respostas.
 
 ---
 
@@ -53,6 +98,7 @@ Para construir e executar uma imagem Docker a partir de um Dockerfile, siga os p
    ```bash
    docker build -t python_paciente_api:latest .
    ```
+
    - **python_paciente_api** é o nome da imagem. Nesse caso, foi utilizado no nome da nossa API.
    - **latest** é a tag de identificação da versão da imagem. Nessa caso, foi utilizado latest, pois é a versão mais recente disponibilizada da API.
    - **.** indica que o Dockerfile está no diretório atual.
@@ -65,10 +111,10 @@ Para construir e executar uma imagem Docker a partir de um Dockerfile, siga os p
    docker run -d -p 5000:5000 -v ./database:/app/database python_paciente_api:latest
    ```
 
-   - **-d** inicia o contêiner em modo *detached* (em segundo plano).
-   - **-p 5000:5000** mapeia a porta do host para a porta do contêiner, no formato *porta-do-host:porta-do-contêiner*.
-   - **-v ./database:/app/database** monta um volume (mapeando caminhos no formato */caminho/no/host:/caminho/no/contêiner*), permitindo que dados sejam persistentes no diretório `./database` do host e `/app/database` do contêiner. 
-   - **python_paciente_api:latest** é a imagem que criamos com o comando *docker build* no item 1, no format *nome-da-imagem:tag*.
+   - **-d** inicia o contêiner em modo _detached_ (em segundo plano).
+   - **-p 5000:5000** mapeia a porta do host para a porta do contêiner, no formato _porta-do-host:porta-do-contêiner_.
+   - **-v ./database:/app/database** monta um volume (mapeando caminhos no formato _/caminho/no/host:/caminho/no/contêiner_), permitindo que dados sejam persistentes no diretório `./database` do host e `/app/database` do contêiner.
+   - **python_paciente_api:latest** é a imagem que criamos com o comando _docker build_ no item 1, no format _nome-da-imagem:tag_.
 
 3. Verificando o Contêiner em Execução:
 
@@ -99,7 +145,7 @@ O Docker Compose simplifica a definição e execução de aplicativos Docker de 
    ```
 
    - **--build** reconstrói as imagens se necessário.
-   - **-d** inicia os contêineres em segundo plano (*detached mode*).
+   - **-d** inicia os contêineres em segundo plano (_detached mode_).
 
 2. Parando os Serviços:
 
@@ -109,7 +155,7 @@ O Docker Compose simplifica a definição e execução de aplicativos Docker de 
    docker-compose down
    ```
 
-   Isso irá parar todos os contêineres e remover os recursos criados pelo *docker-compose up*.
+   Isso irá parar todos os contêineres e remover os recursos criados pelo _docker-compose up_.
 
 # Testando a API de Pacientes com PyTest (Testes Unitários)
 
@@ -160,7 +206,7 @@ Os testes unitários cobrem as seguintes funcionalidades da API:
 
    - Verifica se um paciente existente é atualizado com sucesso.
    - Verifica se a rota retorna um erro 404 quando o CPF não é encontrado no banco de dados.
-   
+
 5. **Deleção de Paciente (`DELETE /paciente/<cpf>`):**
    - Verifica se um paciente é deletado com sucesso.
    - Verifica se a rota retorna um erro 404 quando o CPF não é encontrado no banco de dados.
@@ -213,4 +259,4 @@ Após iniciar o teste de carga, a interface web do Locust exibirá gráficos e e
 
 # Contribuindo
 
-Se você encontrar qualquer problema ou tiver sugestões para melhorar a API, os testes unitários, os testes de carga, sinta-se à vontade para abrir uma *issue* ou enviar um *pull request*.
+Se você encontrar qualquer problema ou tiver sugestões para melhorar a API, os testes unitários, os testes de carga, sinta-se à vontade para abrir uma _issue_ ou enviar um _pull request_.
