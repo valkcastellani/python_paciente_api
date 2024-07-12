@@ -107,10 +107,11 @@ Para construir e executar uma imagem Docker a partir de um Dockerfile, siga os p
    Após construir a imagem, você pode iniciar um contêiner a partir dessa imagem com o comando:
 
    ```bash
-   docker run -d -p 5000:5000 -v ./database:/app/database python_paciente_api:latest
+   docker run -d --network host -p 5000:5000 -v ./database:/app/database python_paciente_api:latest
    ```
 
    - **-d** inicia o contêiner em modo _detached_ (em segundo plano).
+   - **--network host** informa que será utilizada a rede do *host*.
    - **-p 5000:5000** mapeia a porta do host para a porta do contêiner, no formato _porta-do-host:porta-do-contêiner_.
    - **-v ./database:/app/database** monta um volume (mapeando caminhos no formato _/caminho/no/host:/caminho/no/contêiner_), permitindo que dados sejam persistentes no diretório `./database` do host e `/app/database` do contêiner.
    - **python_paciente_api:latest** é a imagem que criamos com o comando _docker build_ no item 1, no format _nome-da-imagem:tag_.
