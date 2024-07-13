@@ -89,6 +89,10 @@ def apresenta_pacientes(pacientes: List[Paciente]):
 
     result = []
     for paciente in pacientes:
+        logradouro = ""
+        bairro = ""
+        cidade = ""
+        estado = ""
         endereco = ""
         if paciente.cep > 0:
             api_externa = f"https://viacep.com.br/ws/{paciente.cep}/json/"
@@ -102,6 +106,10 @@ def apresenta_pacientes(pacientes: List[Paciente]):
                             f"{data.get('bairro')}, {data.get('localidade')} - {data.get('uf')} - {data.get('cep')}"
                         )
             except:
+                logradouro = ""
+                bairro = ""
+                cidade = ""
+                estado = ""
                 endereco = ""
 
         result.append(
@@ -109,8 +117,17 @@ def apresenta_pacientes(pacientes: List[Paciente]):
                 "cpf": paciente.cpf,
                 "nome": paciente.nome,
                 "data_nascimento": paciente.data_nascimento,
+                "sexo": paciente.sexo,
+                "cep": paciente.cep,
+                "numero": paciente.numero,
+                "complemento": paciente.complemento,
                 "telefone": paciente.telefone,
                 "email": paciente.email,
+                "data_insercao": paciente.data_insercao,
+                "logradouro": logradouro,
+                "bairro": bairro,
+                "cidade": cidade,
+                "estado": estado,
                 "endereco": endereco,
             }
         )
